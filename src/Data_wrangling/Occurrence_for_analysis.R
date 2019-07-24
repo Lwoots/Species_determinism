@@ -69,3 +69,6 @@ all_dat <- left_join(sp_occ, my_soil_df %>% select(colnames(soil_dat[2:15]), plo
     na.omit()
 
 rm(nb_sp, sp_occ, soil_dat)
+
+
+#git

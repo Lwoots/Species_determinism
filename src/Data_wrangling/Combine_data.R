@@ -39,12 +39,13 @@ rm(species_only, sp_abundance, abundance, species_richness)
 
 #Soil data_frame
 names(raw_els)[1] <- "plot"
-levels(raw_els$plot)[levels(raw_els$plot)== "R40"] <- "R40 "
-levels(raw_els$plot)[levels(raw_els$plot)== "R0"] <- "R0 "
-levels(raw_els$plot)[levels(raw_els$plot)== "R10"] <- "R10 "
-levels(raw_els$plot)[levels(raw_els$plot)== "R20"] <- "R20 "
-levels(raw_els$plot)[levels(raw_els$plot)== "R30"] <- "R30 "
-levels(raw_els$plot)[levels(raw_els$plot)== "R50"] <- "R50 "
+levels(raw_els$plot)[levels(raw_els$plot)== "R 40"] <- "R40 "
+levels(raw_els$plot)[levels(raw_els$plot)== "R 0"] <- "R0 "
+levels(raw_els$plot)[levels(raw_els$plot)== "R 10"] <- "R10 "
+levels(raw_els$plot)[levels(raw_els$plot)== "R 20"] <- "R20 "
+levels(raw_els$plot)[levels(raw_els$plot)== "R 30"] <- "R30 "
+levels(raw_els$plot)[levels(raw_els$plot)== "R 50"] <- "R50 "
+levels(raw_els$plot)[levels(raw_els$plot)== "E5 "] <- "E5"
 
 texture <- texture %>% select(-c(2:113, 121))
 texture <- mutate(texture, 
