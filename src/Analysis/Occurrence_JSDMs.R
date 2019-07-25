@@ -143,7 +143,7 @@ rm(stoc_auc_burt,
    stoc_auc_stam,
    stoc_auc_dic ,
    stoc_auc_ooph,
-   cl)
+   cl) 
 
 #Add auc from each iteration into a vector
 
