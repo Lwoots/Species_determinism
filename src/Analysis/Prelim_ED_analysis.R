@@ -8,26 +8,12 @@ p_load(tidyverse, here, visdat)
 source(here("src/Data_wrangling", "Abundance_for_analysis.R"))
 glimpse(all_dat)
 
+#Get ED data
+ED_dat <- read.csv(here("Raw/Unprocessed", "ED_growth_metrics_23Oct_full.csv"), sep = ";" )
+
 #Extract just the soils that were used in the experiment
 
-soils_ED <- all_dat %>% filter(plot == c("L30", "L40",
-                                         "Q20", "R50",
-                                         "S10", "T35",
-                                         "U50", "U0",
-                                         "V30", "E5",
-                                         "D15", "E40",
-                                         "C40", "A30",
-                                         "A35", "C30",
-                                         "I40"))
-
-
-
-
-
-
-
-
-soils_ED <- all_dat %>% filter(plot == "L30" |
+soils_field <- all_dat %>% filter(plot == "L30" |
                                plot == "L40"|
                                plot == "Q20" |
                                plot == "R50 " |
@@ -59,8 +45,13 @@ soils_ED <- all_dat %>% filter(plot == "L30" |
                                plot == "AK20" 
 )
 
-glimpse(soils_ED)
-soils_ED$Soil <- seq(1, 30, 1) #Add column of the soil codes for easy plotting
+glimpse(soils_field)
+soils_field$Soil <- seq(1, 30, 1) #Add column of the soil codes for easy plotting
 
-plot(soils_ED$R_comptonii ~ soils_ED$Soil)
+plot(soils_field$Oophytum_sp ~ soils_field$Soil)
+
+#Wrangling ED data ####
+
+ED_dat <- ED_dat %>% filter(!notes == "wrong_id")
+
 
