@@ -85,63 +85,63 @@ combined <- left_join(combined, mean_ED_dat, by = "Soil_code")
 #Let's see how height distributions have changed over time
 
 #Rburt
-ggplot() +
+ggplot() + labs(x = "R burt") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "A",], aes(H2), alpha = 0.4, fill = "blue") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "A",], aes(H1),  alpha = 0.4, fill = "grey") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "A",], aes(H3),  alpha = 0.4, fill = "red")
 
 #Afissum
 
-ggplot() +
+ggplot() + labs(x = "A fissum") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "B",], aes(H2), alpha = 0.4, fill = "blue") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "B",], aes(H1),  alpha = 0.4, fill = "grey") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "B",], aes(H3),  alpha = 0.4, fill = "red")
 
 #Ddiv
 
-ggplot() +
+ggplot() + labs(x = "D div") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "C",], aes(H2), alpha = 0.4, fill = "blue") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "C",], aes(H1),  alpha = 0.4, fill = "grey") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "C",], aes(H3),  alpha = 0.4, fill = "red")
 
 #Cstam
 
-ggplot() +
+ggplot() + labs(x = "C stam") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "D",], aes(H2), alpha = 0.4, fill = "blue") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "D",], aes(H1),  alpha = 0.4, fill = "grey") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "D",], aes(H3),  alpha = 0.4, fill = "red")
 
 #Rcomp
 
-ggplot() +
+ggplot() + labs(x = "R comp") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "E",], aes(H2), alpha = 0.4, fill = "blue") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "E",], aes(H1),  alpha = 0.4, fill = "grey") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "E",], aes(H3),  alpha = 0.4, fill = "red")
 
 #Adel
 
-ggplot() +
+ggplot() + labs(x = "A del") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "G",], aes(H2), alpha = 0.4, fill = "blue") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "G",], aes(H1),  alpha = 0.4, fill = "grey") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "G",], aes(H3),  alpha = 0.4, fill = "red")
 
 #Ooph
 
-ggplot() +
+ggplot() + labs(x = "Oophytum") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "H",], aes(H2), alpha = 0.4, fill = "blue") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "H",], aes(H1),  alpha = 0.4, fill = "grey") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "H",], aes(H3),  alpha = 0.4, fill = "red")
 
 #Aframesii
 
-ggplot() +
+ggplot() + labs(x = "A framesii") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "I",], aes(H2), alpha = 0.4, fill = "blue") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "I",], aes(H1),  alpha = 0.4, fill = "grey") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "I",], aes(H3),  alpha = 0.4, fill = "red")
 
 #CCspissum
 
-ggplot() +
+ggplot() + labs(x = "C spissum") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "J",], aes(H2), alpha = 0.4, fill = "blue") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "J",], aes(H1),  alpha = 0.4, fill = "grey") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "J",], aes(H3),  alpha = 0.4, fill = "red")
@@ -314,6 +314,18 @@ points(spissum$H1 ~ rep(1, 30),
 segments(rep(1,30), spissum$H1, rep(2, 30), spissum$H2)
 segments(rep(2,30), spissum$H2, rep(3, 30), spissum$H3)
 
+#Is there a relationship between H2 and H3?
+
+plot(burt$H2, burt$H3, pch = 19)
+plot(fissum$H2, fissum$H3, pch = 19)
+plot(div$H2, div$H3, pch = 19)
+plot(stam$H2, stam$H3, pch = 19)
+plot(comp$H2, comp$H3, pch = 19)
+plot(del$H2, del$H3, pch = 19)
+plot(ooph$H2, ooph$H3, pch = 19)
+plot(fram$H2, fram$H3, pch = 19)
+plot(spissum$H2, spissum$H3, pch = 19)
+
 
 #How does height relate to field abundance?
 
@@ -353,6 +365,108 @@ plot(fram$Na, fram$H3)
 plot(spissum$Na, spissum$H3)
 
 
+plot(log(burt$P), burt$H3)
+plot(fissum$P, fissum$H3)
+plot(div$P, div$H3)
+plot(stam$P, stam$H3)
+plot(comp$P, comp$H3)
+plot(del$P, del$H3)
+plot(ooph$P, ooph$H3)
+plot(log(fram$P), fram$H3)
+plot(spissum$P, spissum$H3)
+
+
+
+
+#PCA
+
+#Burt
+burt_pca <- prcomp(burt[,c(13:16, 21, 22, 24,25)], scale. = T)
+
+
+burt_pca <- burt_pca$x
+ggplot(as.data.frame(dat_pca), aes(PC1, PC2, color = burt$H3) ) +
+    geom_point(size = 4)
+
+burt_pca <- as.data.frame(burt_pca)
+plot(burt_pca$PC1, burt$H3)
+plot(burt_pca$PC2, burt$H3)
+plot(burt_pca$PC3, burt$H3)
+
+mbpca <- lm(burt$H3 ~ burt_pca$PC2 + burt_pca$PC1 + burt_pca$PC3)
+summary(mbpca)
+
+#Fissum
+
+fis_pca <- prcomp(fissum[,c(13:16, 21, 22, 24,25)], scale. = T)
+
+fis_pca <- fis_pca$x
+ggplot(as.data.frame(fis_pca), aes(PC1, PC2, color = fissum$H3) ) +
+    geom_point(size = 4)
+
+fis_pca <- as.data.frame(fis_pca)
+
+plot(fis_pca$PC1, fissum$H3)
+plot(fis_pca$PC2, fissum$H3)
+plot(fis_pca$PC3, fissum$H3)
+
+mfispca <- lm(fissum$H3 ~ fis_pca$PC1 + fis_pca$PC2 + fis_pca$PC3)
+summary(mfispca)
+
+#D div
+
+div_pca <- prcomp(div[,c(13:16, 21, 22, 24,25)], scale. = T)
+
+div_pca <- as.data.frame(div_pca$x)
+ggplot(as.data.frame(div_pca), aes(PC1, PC2, color = div$H3) ) +
+    geom_point(size = 4)
+
+
+plot(div_pca$PC1, div$H3)
+plot(div_pca$PC2, div$H3)
+plot(div_pca$PC3, div$H3)
+
+mdivpca <- lm(div$H3 ~ div_pca$PC2 + div_pca$PC1 + div_pca$PC3)
+summary(mdivpca)
+
+#Stam
+
+stam_pca <- prcomp(stam[,c(13:16, 21, 22, 24,25)], scale. = T)
+
+stam_pca <- as.data.frame(stam_pca$x)
+ggplot(stam_pca, aes(PC1, PC2, color = stam$H3) ) +
+    geom_point(size = 4)
+
+plot(stam$H3 ~ stam_pca$PC1)
+plot(stam$H3 ~ stam_pca$PC2)
+plot(stam$H3 ~ stam_pca$PC3)
+
+mstpca <- lm(stam$H3 ~ stam_pca$PC3 + stam_pca$PC1 + stam_pca$PC2)
+summary(mstpca)
+
+#Comp
+comp_pca <- prcomp(comp[,c(13:16, 21, 22, 24,25)], scale. = T)
+
+comp_pca <- as.data.frame(comp_pca$x)
+ggplot(as.data.frame(comp_pca), aes(PC1, PC2, color = comp$H3) ) +
+    geom_point(size = 4)
+
+plot(dat$PC1, comp$H3)
+plot(dat$PC2, comp$H3)
+plot(dat$PC3, comp$H3)
+
+
+#Ooph
+
+ooph_pca <- prcomp(ooph[,c(13:16, 21, 22, 24,25)], scale. = T)
+ooph_pca <- as.data.frame(ooph_pca$x)
+
+ggplot(as.data.frame(ooph_pca), aes(PC1, PC2, color = ooph$H3) ) +
+    geom_point(size = 4)
+
+plot(ooph$H3 ~ ooph_pca$PC3)
+
+
 
 
 
@@ -361,8 +475,10 @@ plot(spissum$Na, spissum$H3)
 
 species <- combined[combined$Species == "A",]
 
-pca <- prcomp(species[,c(13:16, 21, 22, 24,25)], scale. = T)
-plot(pca$x[,1], pca$x[,2])
+dat_pca <- prcomp(species[,c(13:16, 21, 22, 24,25)], scale. = T)
+
+
+
 
 
 
@@ -381,19 +497,37 @@ species <- combined[combined$Species == "J",]
 pca <- prcomp(species[,c(13:16, 21, 22, 24,25)], scale. = T)
 
 pca_dat <- cbind(as.data.frame(pca$x), species$H3)
-ggplot(pca_dat, aes(PC1, PC2, color = species$H3) ) +
+ggplot(dat_pca, aes(PC1, PC2, color = species$H3) ) +
     geom_point(size = 4)
 
 
 #Models
 
-mburt <- lm(burt$H3 ~ burt$ph_kcl + burt$Na)
+mburt <- lm(burt$H3 ~ burt$ph_kcl + burt$Na + burt$C_N_ratio + burt$Ca + burt$P + burt$N_perc + burt$Clay + burt$corr_dN)
 summary(mburt)
-plot(burt$H3 ~ burt$ph_kcl)
-plot(burt$H3 ~ burt$Na)
 
-mstam <- lm(stam$H3 ~ stam$ph_kcl + stam$Na)
+mfis <- lm(H3 ~ ph_kcl + Na + C_N_ratio + Ca + P + N_perc + Clay + corr_dN, data = fissum)
+summary(mfis)
+
+mdiv <- lm(H3 ~ ph_kcl + Na + C_N_ratio + Ca + P + N_perc + Clay + corr_dN, data = div)
+summary(mdiv)
+
+
+mstam <- lm(H3 ~ ph_kcl + Na + C_N_ratio + Ca + P + N_perc + Clay + corr_dN, data = stam)
 summary(mstam)
+
+
+mcomp <- lm(H3 ~ ph_kcl + Na + C_N_ratio + Ca + P + N_perc + Clay + corr_dN, data = comp)
+summary(mcomp)
+
+
+
+
+
+
+
+
+
 
 mcomp <- lm(comp$H3 ~  comp$ph_kcl + comp$Na )
 summary(mcomp)
