@@ -11,7 +11,11 @@ glimpse(all_dat)
 #Get ED data
 ED_dat <- read.csv(here("Raw/Unprocessed", "ED_growth_metrics_23Oct_edited.csv"), sep = ";" )
 
-#Extract just the soils that were used in the experiment
+#Get soil and species codes
+
+codes <- read.csv(here("Raw/Tidy", "ED_species_soil_codes.csv"), sep = ";" )
+
+#Extract just the soils that were used in the experiment from the field data
 
 soils_field <- all_dat %>% filter(plot == "L30" |
                                plot == "L40"|
@@ -46,7 +50,10 @@ soils_field <- all_dat %>% filter(plot == "L30" |
 )
 
 glimpse(soils_field)
-soils_field$Soil <- seq(1, 30, 1) #Add column of the soil codes for easy plotting
+
+names(codes)[2] <- "plot"
+combined <- left_join(soils_field, codes, by = "plot") #Add column of the soil codes for easy plotting
+combined <- combined[,-c(29:30)]
 
 plot(soils_field$Oophytum_sp ~ soils_field$Soil)
 
@@ -97,3 +104,89 @@ hist(mean_ED_dat$H3[mean_ED_dat$Species == "B"],
      col = "black",
      xlim = c(0,15),
      breaks = seq(0,40,1))
+
+rburt <- mean_ED_dat[mean_ED_dat$Species == "A",]
+ggplot() +
+    #geom_histogram(data = rburt, aes(H2), binwidth = 2.5, alpha = 0.5, fill = "blue") +
+    geom_histogram(data = rburt, aes(H1), binwidth = 2.5, alpha = 0.5) +
+    geom_histogram(data = rburt, aes(H3), binwidth = 2.5, alpha = 0.5, fill = "red")
+ggplot() +
+    geom_histogram(data = mean_ED_dat[mean_ED_dat$Species == "C",], aes(H2), binwidth = 2.5, alpha = 0.5, fill = "blue") +
+    geom_histogram(data = mean_ED_dat[mean_ED_dat$Species == "C",], aes(H1), binwidth = 2.5, alpha = 0.5) +
+    geom_histogram(data = mean_ED_dat[mean_ED_dat$Species == "C",], aes(H3), binwidth = 2.5, alpha = 0.5, fill = "red")
+
+ggplot() +
+    #geom_histogram(data = mean_ED_dat[mean_ED_dat$Species == "J",], aes(H2), binwidth = 2, alpha = 0.5, fill = "blue") +
+    geom_histogram(data = mean_ED_dat[mean_ED_dat$Species == "J",], aes(H1), binwidth = 2, alpha = 0.5) +
+    geom_histogram(data = mean_ED_dat[mean_ED_dat$Species == "J",], aes(H3), binwidth = 2, alpha = 0.5, fill = "red")
+
+ggplot() +
+    geom_density(data = mean_ED_dat[mean_ED_dat$Species == "A",], aes(H2), alpha = 0.4, fill = "blue") +
+    geom_density(data = mean_ED_dat[mean_ED_dat$Species == "A",], aes(H1),  alpha = 0.4, fill = "grey") +
+    geom_density(data = mean_ED_dat[mean_ED_dat$Species == "A",], aes(H3),  alpha = 0.4, fill = "red")
+
+combined <- left_join(soils_field, mean_ED_dat, by = "Soil")
+
+fissum <- combined[combined$Species =="B",]
+plot(fissum$A_fissum, fissum$H3)
+
+spissum <- combined[combined$Species =="J",]
+plot(spissum$C_spissum, spissum$H3)
+
+framesii <- combined[combined$Species =="I",]
+plot(framesii$A_framesii, framesii$H3)
+
+comp <- combined[combined$Species =="E",]
+plot(comp$R_comptonii, comp$H3)
+
+burt <- combined[combined$Species =="A",]
+plot(burt$R_burtoniae, burt$H3)
+
+stam <- combined[combined$Species =="D",]
+plot(stam$C_staminodiosum, stam$H3)
+
+species <- combined[combined$Species == "A",]
+
+pca <- prcomp(species[,c(13:16, 21, 22, 24,25)], scale. = T)
+plot(pca$x[,1], pca$x[,2])
+
+
+
+plot(combined[combined$Species == "I",]$Clay, combined[combined$Species == "I",]$H3)
+plot(combined[combined$Species == "A",]$Na, pca$x[,1])
+plot(pca$x[,1], combined[combined$Species == "B",]$H3)
+
+m1 <- lm(combined[combined$Species == "I",]$H3 ~ combined[combined$Species == "I",]$ph_kcl)
+summary(m1)
+
+ggplot(combined[combined$Species == "B",], aes(ph_kcl, Na, colour = H3)) +
+    geom_point(size = 3)
+
+species <- combined[combined$Species == "J",]
+
+pca <- prcomp(species[,c(13:16, 21, 22, 24,25)], scale. = T)
+
+pca_dat <- cbind(as.data.frame(pca$x), species$H3)
+ggplot(pca_dat, aes(PC1, PC2, color = species$H3) ) +
+    geom_point(size = 4)
+
+
+#Models
+
+mburt <- lm(burt$H3 ~ burt$ph_kcl + burt$Na)
+summary(mburt)
+plot(burt$H3 ~ burt$ph_kcl)
+plot(burt$H3 ~ burt$Na)
+
+mstam <- lm(stam$H3 ~ stam$ph_kcl + stam$Na)
+summary(mstam)
+
+mcomp <- lm(comp$H3 ~  comp$ph_kcl + comp$Na )
+summary(mcomp)
+plot(comp$Na, comp$H3)
+plot(comp$ph_kcl, comp$H3)
+
+mfram <- lm(framesii$H3 ~ framesii$Clay + framesii$N_perc)
+mfram <- lm(framesii$H3 ~ framesii$ph_kcl + framesii$Na)
+summary(mfram)
+plot(framesii$Clay, framesii$H3)
