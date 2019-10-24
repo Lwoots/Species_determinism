@@ -55,7 +55,6 @@ names(codes)[2] <- "plot"
 combined <- left_join(soils_field, codes, by = "plot") #Add column of the soil codes for easy plotting
 combined <- combined[,-c(29:30)]
 
-plot(soils_field$Oophytum_sp ~ soils_field$Soil)
 
 #Wrangling ED data ####
 
@@ -77,55 +76,76 @@ mean_ED_dat <- filtered_ED_dat %>%
                              H3 = mean(Height_3))
 glimpse(mean_ED_dat)
 
-hist(mean_ED_dat$H1[mean_ED_dat$Species == "A"],
-     xlim = c(0,40),
-     breaks = seq(0,40,2))
-hist(mean_ED_dat$H2[mean_ED_dat$Species == "A"], 
-     add = T,
-     col = "grey",
-     xlim = c(0,40),
-     breaks = seq(0,40,2))
-hist(mean_ED_dat$H3[mean_ED_dat$Species == "A"], 
-     add = T,
-     col = "black",
-     xlim = c(0,40),
-     breaks = seq(0,40,2))
+#Combine with field data
+names(mean_ED_dat)[1] <- "Soil_code"
 
-hist(mean_ED_dat$H1[mean_ED_dat$Species == "B"],
-     xlim = c(0,15),
-     breaks = seq(0,40,1))
-hist(mean_ED_dat$H2[mean_ED_dat$Species == "B"], 
-     add = T,
-     col = "grey",
-     xlim = c(0,15),
-     breaks = seq(0,40,1))
-hist(mean_ED_dat$H3[mean_ED_dat$Species == "B"], 
-     add = T,
-     col = "black",
-     xlim = c(0,15),
-     breaks = seq(0,40,1))
+combined <- left_join(combined, mean_ED_dat, by = "Soil_code")
 
-rburt <- mean_ED_dat[mean_ED_dat$Species == "A",]
-ggplot() +
-    #geom_histogram(data = rburt, aes(H2), binwidth = 2.5, alpha = 0.5, fill = "blue") +
-    geom_histogram(data = rburt, aes(H1), binwidth = 2.5, alpha = 0.5) +
-    geom_histogram(data = rburt, aes(H3), binwidth = 2.5, alpha = 0.5, fill = "red")
-ggplot() +
-    geom_histogram(data = mean_ED_dat[mean_ED_dat$Species == "C",], aes(H2), binwidth = 2.5, alpha = 0.5, fill = "blue") +
-    geom_histogram(data = mean_ED_dat[mean_ED_dat$Species == "C",], aes(H1), binwidth = 2.5, alpha = 0.5) +
-    geom_histogram(data = mean_ED_dat[mean_ED_dat$Species == "C",], aes(H3), binwidth = 2.5, alpha = 0.5, fill = "red")
 
-ggplot() +
-    #geom_histogram(data = mean_ED_dat[mean_ED_dat$Species == "J",], aes(H2), binwidth = 2, alpha = 0.5, fill = "blue") +
-    geom_histogram(data = mean_ED_dat[mean_ED_dat$Species == "J",], aes(H1), binwidth = 2, alpha = 0.5) +
-    geom_histogram(data = mean_ED_dat[mean_ED_dat$Species == "J",], aes(H3), binwidth = 2, alpha = 0.5, fill = "red")
+#Let's see how height distributions have changed over time
 
+#Rburt
 ggplot() +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "A",], aes(H2), alpha = 0.4, fill = "blue") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "A",], aes(H1),  alpha = 0.4, fill = "grey") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "A",], aes(H3),  alpha = 0.4, fill = "red")
 
-combined <- left_join(soils_field, mean_ED_dat, by = "Soil")
+#Afissum
+
+ggplot() +
+    geom_density(data = mean_ED_dat[mean_ED_dat$Species == "B",], aes(H2), alpha = 0.4, fill = "blue") +
+    geom_density(data = mean_ED_dat[mean_ED_dat$Species == "B",], aes(H1),  alpha = 0.4, fill = "grey") +
+    geom_density(data = mean_ED_dat[mean_ED_dat$Species == "B",], aes(H3),  alpha = 0.4, fill = "red")
+
+#
+
+ggplot() +
+    geom_density(data = mean_ED_dat[mean_ED_dat$Species == "C",], aes(H2), alpha = 0.4, fill = "blue") +
+    geom_density(data = mean_ED_dat[mean_ED_dat$Species == "C",], aes(H1),  alpha = 0.4, fill = "grey") +
+    geom_density(data = mean_ED_dat[mean_ED_dat$Species == "C",], aes(H3),  alpha = 0.4, fill = "red")
+
+#
+
+ggplot() +
+    geom_density(data = mean_ED_dat[mean_ED_dat$Species == "D",], aes(H2), alpha = 0.4, fill = "blue") +
+    geom_density(data = mean_ED_dat[mean_ED_dat$Species == "D",], aes(H1),  alpha = 0.4, fill = "grey") +
+    geom_density(data = mean_ED_dat[mean_ED_dat$Species == "D",], aes(H3),  alpha = 0.4, fill = "red")
+
+#
+
+ggplot() +
+    geom_density(data = mean_ED_dat[mean_ED_dat$Species == "E",], aes(H2), alpha = 0.4, fill = "blue") +
+    geom_density(data = mean_ED_dat[mean_ED_dat$Species == "E",], aes(H1),  alpha = 0.4, fill = "grey") +
+    geom_density(data = mean_ED_dat[mean_ED_dat$Species == "E",], aes(H3),  alpha = 0.4, fill = "red")
+
+#
+
+ggplot() +
+    geom_density(data = mean_ED_dat[mean_ED_dat$Species == "G",], aes(H2), alpha = 0.4, fill = "blue") +
+    geom_density(data = mean_ED_dat[mean_ED_dat$Species == "G",], aes(H1),  alpha = 0.4, fill = "grey") +
+    geom_density(data = mean_ED_dat[mean_ED_dat$Species == "G",], aes(H3),  alpha = 0.4, fill = "red")
+
+#
+
+ggplot() +
+    geom_density(data = mean_ED_dat[mean_ED_dat$Species == "H",], aes(H2), alpha = 0.4, fill = "blue") +
+    geom_density(data = mean_ED_dat[mean_ED_dat$Species == "H",], aes(H1),  alpha = 0.4, fill = "grey") +
+    geom_density(data = mean_ED_dat[mean_ED_dat$Species == "H",], aes(H3),  alpha = 0.4, fill = "red")
+
+#
+
+ggplot() +
+    geom_density(data = mean_ED_dat[mean_ED_dat$Species == "I",], aes(H2), alpha = 0.4, fill = "blue") +
+    geom_density(data = mean_ED_dat[mean_ED_dat$Species == "I",], aes(H1),  alpha = 0.4, fill = "grey") +
+    geom_density(data = mean_ED_dat[mean_ED_dat$Species == "I",], aes(H3),  alpha = 0.4, fill = "red")
+
+#
+
+ggplot() +
+    geom_density(data = mean_ED_dat[mean_ED_dat$Species == "J",], aes(H2), alpha = 0.4, fill = "blue") +
+    geom_density(data = mean_ED_dat[mean_ED_dat$Species == "J",], aes(H1),  alpha = 0.4, fill = "grey") +
+    geom_density(data = mean_ED_dat[mean_ED_dat$Species == "J",], aes(H3),  alpha = 0.4, fill = "red")
+
 
 fissum <- combined[combined$Species =="B",]
 plot(fissum$A_fissum, fissum$H3)
