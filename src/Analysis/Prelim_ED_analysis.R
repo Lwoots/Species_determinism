@@ -97,54 +97,224 @@ ggplot() +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "B",], aes(H1),  alpha = 0.4, fill = "grey") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "B",], aes(H3),  alpha = 0.4, fill = "red")
 
-#
+#Ddiv
 
 ggplot() +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "C",], aes(H2), alpha = 0.4, fill = "blue") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "C",], aes(H1),  alpha = 0.4, fill = "grey") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "C",], aes(H3),  alpha = 0.4, fill = "red")
 
-#
+#Cstam
 
 ggplot() +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "D",], aes(H2), alpha = 0.4, fill = "blue") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "D",], aes(H1),  alpha = 0.4, fill = "grey") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "D",], aes(H3),  alpha = 0.4, fill = "red")
 
-#
+#Rcomp
 
 ggplot() +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "E",], aes(H2), alpha = 0.4, fill = "blue") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "E",], aes(H1),  alpha = 0.4, fill = "grey") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "E",], aes(H3),  alpha = 0.4, fill = "red")
 
-#
+#Adel
 
 ggplot() +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "G",], aes(H2), alpha = 0.4, fill = "blue") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "G",], aes(H1),  alpha = 0.4, fill = "grey") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "G",], aes(H3),  alpha = 0.4, fill = "red")
 
-#
+#Ooph
 
 ggplot() +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "H",], aes(H2), alpha = 0.4, fill = "blue") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "H",], aes(H1),  alpha = 0.4, fill = "grey") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "H",], aes(H3),  alpha = 0.4, fill = "red")
 
-#
+#Aframesii
 
 ggplot() +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "I",], aes(H2), alpha = 0.4, fill = "blue") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "I",], aes(H1),  alpha = 0.4, fill = "grey") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "I",], aes(H3),  alpha = 0.4, fill = "red")
 
-#
+#CCspissum
 
 ggplot() +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "J",], aes(H2), alpha = 0.4, fill = "blue") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "J",], aes(H1),  alpha = 0.4, fill = "grey") +
     geom_density(data = mean_ED_dat[mean_ED_dat$Species == "J",], aes(H3),  alpha = 0.4, fill = "red")
+
+#Make growth curves ####
+
+#Subset data
+
+burt <- combined[combined$Species =="A",]
+fissum <- combined[combined$Species =="B",]
+div <- combined[combined$Species =="C",]
+stam <- combined[combined$Species =="D",]
+comp <- combined[combined$Species =="E",]
+del <- combined[combined$Species =="G",]
+ooph <-  combined[combined$Species =="H",]
+fram <- combined[combined$Species =="I",]
+spissum <- combined[combined$Species =="J",]
+
+#curves
+
+#Rburt
+plot(burt$H3 ~ rep(3, 30),
+     xlim = c(1,3),
+     col = burt$Soil_code,
+     pch = 19)
+points(burt$H2 ~ rep(2, 30),
+     xlim = c(1,3),
+     col = burt$Soil_code,
+     pch = 19)
+points(burt$H1 ~ rep(1, 30),
+       xlim = c(1,3),
+       col = burt$Soil_code,
+       pch = 19)
+segments(rep(1,30), burt$H1, rep(2, 30), burt$H2)
+segments(rep(2,30), burt$H2, rep(3, 30), burt$H3)
+
+#Afissum
+
+plot(fissum$H3 ~ rep(3, 30),
+     xlim = c(1,3),
+     col = fissum$Soil_code,
+     pch = 19)
+points(fissum$H2 ~ rep(2, 30),
+       xlim = c(1,3),
+       col = fissum$Soil_code,
+       pch = 19)
+points(fissum$H1 ~ rep(1, 30),
+       xlim = c(1,3),
+       col = fissum$Soil_code,
+       pch = 19)
+segments(rep(1,30), fissum$H1, rep(2, 30), fissum$H2)
+segments(rep(2,30), fissum$H2, rep(3, 30), fissum$H3)
+
+#Ddiv
+
+plot(div$H3 ~ rep(3, 30),
+     xlim = c(1,3),
+     col = div$Soil_code,
+     pch = 19)
+points(div$H2 ~ rep(2, 30),
+       xlim = c(1,3),
+       col = div$Soil_code,
+       pch = 19)
+points(div$H1 ~ rep(1, 30),
+       xlim = c(1,3),
+       col = div$Soil_code,
+       pch = 19)
+segments(rep(1,30), div$H1, rep(2, 30), div$H2)
+segments(rep(2,30), div$H2, rep(3, 30), div$H3)
+
+#Cstam
+
+plot(stam$H3 ~ rep(3, 30),
+     xlim = c(1,3),
+     col = stam$Soil_code,
+     pch = 19)
+points(stam$H2 ~ rep(2, 30),
+       xlim = c(1,3),
+       col = stam$Soil_code,
+       pch = 19)
+points(stam$H1 ~ rep(1, 30),
+       xlim = c(1,3),
+       col = stam$Soil_code,
+       pch = 19)
+segments(rep(1,30), stam$H1, rep(2, 30), stam$H2)
+segments(rep(2,30), stam$H2, rep(3, 30), stam$H3)
+
+#Rcomp
+
+plot(comp$H3 ~ rep(3, 30),
+     xlim = c(1,3),
+     col = comp$Soil_code,
+     pch = 19)
+points(comp$H2 ~ rep(2, 30),
+       xlim = c(1,3),
+       col = comp$Soil_code,
+       pch = 19)
+points(comp$H1 ~ rep(1, 30),
+       xlim = c(1,3),
+       col = comp$Soil_code,
+       pch = 19)
+segments(rep(1,30), comp$H1, rep(2, 30), comp$H2)
+segments(rep(2,30), comp$H2, rep(3, 30), comp$H3)
+
+#Adel
+
+plot(del$H3 ~ rep(3, 30),
+     xlim = c(1,3),
+     col = del$Soil_code,
+     pch = 19)
+points(del$H2 ~ rep(2, 30),
+       xlim = c(1,3),
+       col = del$Soil_code,
+       pch = 19)
+points(del$H1 ~ rep(1, 30),
+       xlim = c(1,3),
+       col = del$Soil_code,
+       pch = 19)
+segments(rep(1,30), del$H1, rep(2, 30), del$H2)
+segments(rep(2,30), del$H2, rep(3, 30), del$H3)
+
+#Ooph
+
+plot(ooph$H3 ~ rep(3, 30),
+     xlim = c(1,3),
+     col = ooph$Soil_code,
+     pch = 19)
+points(ooph$H2 ~ rep(2, 30),
+       xlim = c(1,3),
+       col = ooph$Soil_code,
+       pch = 19)
+points(ooph$H1 ~ rep(1, 30),
+       xlim = c(1,3),
+       col = ooph$Soil_code,
+       pch = 19)
+segments(rep(1,30), ooph$H1, rep(2, 30), ooph$H2)
+segments(rep(2,30), ooph$H2, rep(3, 30), ooph$H3)
+
+#framesii
+
+plot(fram$H3 ~ rep(3, 30),
+     xlim = c(1,3),
+     col = fram$Soil_code,
+     pch = 19)
+points(fram$H2 ~ rep(2, 30),
+       xlim = c(1,3),
+       col = fram$Soil_code,
+       pch = 19)
+points(fram$H1 ~ rep(1, 30),
+       xlim = c(1,3),
+       col = fram$Soil_code,
+       pch = 19)
+segments(rep(1,30), fram$H1, rep(2, 30), fram$H2)
+segments(rep(2,30), fram$H2, rep(3, 30), fram$H3)
+
+#Cspissum
+
+plot(spissum$H3 ~ rep(3, 30),
+     xlim = c(1,3),
+     col = spissum$Soil_code,
+     pch = 19)
+points(spissum$H2 ~ rep(2, 30),
+       xlim = c(1,3),
+       col = spissum$Soil_code,
+       pch = 19)
+points(spissum$H1 ~ rep(1, 30),
+       xlim = c(1,3),
+       col = spissum$Soil_code,
+       pch = 19)
+segments(rep(1,30), spissum$H1, rep(2, 30), spissum$H2)
+segments(rep(2,30), spissum$H2, rep(3, 30), spissum$H3)
+
+
 
 
 fissum <- combined[combined$Species =="B",]
