@@ -315,25 +315,26 @@ segments(rep(1,30), spissum$H1, rep(2, 30), spissum$H2)
 segments(rep(2,30), spissum$H2, rep(3, 30), spissum$H3)
 
 
+#How does height relate to field abundance?
 
 
-fissum <- combined[combined$Species =="B",]
+plot(burt$R_burtoniae, burt$H3)
 plot(fissum$A_fissum, fissum$H3)
-
-spissum <- combined[combined$Species =="J",]
+plot(div$D_diversifolium, div$H3)
+plot(stam$C_staminodiosum, stam$H3)
+plot(comp$R_comptonii, comp$H3)
+plot(del$A_delaetii, del$H3)
+plot(ooph$Oophytum_sp, ooph$H3)
+plot(fram$A_framesii, fram$H3)
 plot(spissum$C_spissum, spissum$H3)
 
-framesii <- combined[combined$Species =="I",]
-plot(framesii$A_framesii, framesii$H3)
 
-comp <- combined[combined$Species =="E",]
-plot(comp$R_comptonii, comp$H3)
 
-burt <- combined[combined$Species =="A",]
-plot(burt$R_burtoniae, burt$H3)
 
-stam <- combined[combined$Species =="D",]
-plot(stam$C_staminodiosum, stam$H3)
+
+
+
+
 
 species <- combined[combined$Species == "A",]
 
