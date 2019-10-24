@@ -328,6 +328,29 @@ plot(ooph$Oophytum_sp, ooph$H3)
 plot(fram$A_framesii, fram$H3)
 plot(spissum$C_spissum, spissum$H3)
 
+#Height and ph?
+
+plot(burt$ph_kcl, burt$H3)
+plot(fissum$ph_kcl, fissum$H3)
+plot(div$ph_kcl, div$H3)
+plot(stam$ph_kcl, stam$H3)
+plot(comp$ph_kcl, comp$H3)
+plot(del$ph_kcl, del$H3)
+plot(ooph$ph_kcl, ooph$H2)
+plot(fram$ph_kcl, fram$H3)
+plot(spissum$ph_kcl, spissum$H3)
+
+#Height and Na?
+
+plot(burt$Na, burt$H3)
+plot(fissum$Na, fissum$H3)
+plot(div$Na, div$H3)
+plot(stam$Na, stam$H3)
+plot(comp$Na, comp$H3)
+plot(del$Na, del$H3)
+plot(ooph$Na, ooph$H3)
+plot(fram$Na, fram$H3)
+plot(spissum$Na, spissum$H3)
 
 
 
