@@ -466,42 +466,22 @@ ggplot(as.data.frame(ooph_pca), aes(PC1, PC2, color = ooph$H3) ) +
 
 plot(ooph$H3 ~ ooph_pca$PC3)
 
+#Framesii
 
+fram_pca <- prcomp(fram[,c(13:16, 21, 22, 24,25)], scale. = T)
+fram_pca <- as.data.frame(fram_pca$x)
 
-
-
-
-
-
-species <- combined[combined$Species == "A",]
-
-dat_pca <- prcomp(species[,c(13:16, 21, 22, 24,25)], scale. = T)
-
-
-
-
-
-
-plot(combined[combined$Species == "I",]$Clay, combined[combined$Species == "I",]$H3)
-plot(combined[combined$Species == "A",]$Na, pca$x[,1])
-plot(pca$x[,1], combined[combined$Species == "B",]$H3)
-
-m1 <- lm(combined[combined$Species == "I",]$H3 ~ combined[combined$Species == "I",]$ph_kcl)
-summary(m1)
-
-ggplot(combined[combined$Species == "B",], aes(ph_kcl, Na, colour = H3)) +
-    geom_point(size = 3)
-
-species <- combined[combined$Species == "J",]
-
-pca <- prcomp(species[,c(13:16, 21, 22, 24,25)], scale. = T)
-
-pca_dat <- cbind(as.data.frame(pca$x), species$H3)
-ggplot(dat_pca, aes(PC1, PC2, color = species$H3) ) +
+ggplot(fram_pca, aes(PC1, PC2, color = fram$H3) ) +
     geom_point(size = 4)
 
+plot(ooph$H3 ~ ooph_pca$PC3)
+plot(ooph$H3 ~ ooph_pca$PC2)
+plot(ooph$H3 ~ ooph_pca$PC1)
 
-#Models
+
+
+
+#Models ####
 
 mburt <- lm(burt$H3 ~ burt$ph_kcl + burt$Na + burt$C_N_ratio + burt$Ca + burt$P + burt$N_perc + burt$Clay + burt$corr_dN)
 summary(mburt)
@@ -520,21 +500,33 @@ summary(mstam)
 mcomp <- lm(H3 ~ ph_kcl + Na + C_N_ratio + Ca + P + N_perc + Clay + corr_dN, data = comp)
 summary(mcomp)
 
+mdel <- lm(H3 ~ ph_kcl + Na + C_N_ratio + Ca + P + N_perc + Clay + corr_dN, data = del)
+summary(mdel)
+
+moop <- lm(H3 ~ ph_kcl + Na + C_N_ratio + Ca + P + N_perc + Clay + corr_dN, data = ooph)
+summary(moop)
+
+mfra <- lm(H3 ~ ph_kcl + Na + C_N_ratio + Ca + P + N_perc + Clay + corr_dN, data = fram)
+summary(mfra)
+
+mspis <- lm(H3 ~ ph_kcl + Na + C_N_ratio + Ca + P + N_perc + Clay + corr_dN, data = spissum)
+summary(mspis)
 
 
 
 
+#Analysis of individuals
 
+names(filtered_ED_dat)[2] <- "Soil_code"
 
+individs <- left_join(filtered_ED_dat, combined, by = "Soil_code")
 
-
-
-mcomp <- lm(comp$H3 ~  comp$ph_kcl + comp$Na )
-summary(mcomp)
-plot(comp$Na, comp$H3)
-plot(comp$ph_kcl, comp$H3)
-
-mfram <- lm(framesii$H3 ~ framesii$Clay + framesii$N_perc)
-mfram <- lm(framesii$H3 ~ framesii$ph_kcl + framesii$Na)
-summary(mfram)
-plot(framesii$Clay, framesii$H3)
+plot(individs[individs$Species == "A",]$Height_3 ~ individs[individs$Species == "A",]$ph_kcl)
+plot(individs[individs$Species == "B",]$Height_3 ~ individs[individs$Species == "B",]$ph_kcl)
+plot(individs[individs$Species == "C",]$Height_3 ~ individs[individs$Species == "C",]$ph_kcl)
+plot(individs[individs$Species == "D",]$Height_3 ~ individs[individs$Species == "D",]$ph_kcl)
+plot(individs[individs$Species == "E",]$Height_3 ~ individs[individs$Species == "E",]$ph_kcl)
+plot(individs[individs$Species == "G",]$Height_3 ~ individs[individs$Species == "G",]$ph_kcl)
+plot(individs[individs$Species == "H",]$Height_3 ~ individs[individs$Species == "H",]$ph_kcl)
+plot(individs[individs$Species == "I",]$Height_3 ~ individs[individs$Species == "I",]$ph_kcl)
+plot(individs[individs$Species == "J",]$Height_3 ~ individs[individs$Species == "J",]$ph_kcl)
