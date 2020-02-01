@@ -1,3 +1,4 @@
+#Weight data ####
 #Tidying experimental design weight data measured by undergraduate David Klopp.
 #Note: empty = samples lost during weighing process. All B7 samples seem to be lost this way.
 # 1 February 2020
@@ -32,6 +33,37 @@ raw_weights <- raw_weights[-363,]
 raw_weights <- na.omit(raw_weights)
 
 #Average by code
-
 avg_mass <- raw_weights %>% group_by(Code) %>% summarise(Mass = mean(Mass))
 
+
+#Growth data ####
+
+#Get ED data
+
+ED_dat <- read.csv(here("Raw/Unprocessed", "ED_growth_metrics_23Oct_full.csv"), sep = ";" )
+
+#Exclude misidentified individuals
+ED_dat <- ED_dat %>% filter(!notes == "wrong_id")
+
+#Exclude rows where individuals never sprouted
+
+filtered_ED_dat <- ED_dat %>% filter(!(is.na(Height_1) &
+                                       is.na(Height_2) &
+                                       is.na(Height_3)
+                                       )
+                                     )
+
+#Exclude notes, leaf width, and intermediate time intervals for now
+
+cleaned_ED_dat <- filtered_ED_dat %>% select(-Height_1a, -Height_2a, -Time_1a, -Time_2a, -notes, -Leaf_3)
+rm(filtered_ED_dat)
+
+#Exclude rows containing dicrocaulon (too few to analyse)
+cleaned_ED_dat <- cleaned_ED_dat[-c(548:551),]
+
+#Add a missing individual number
+cleaned_ED_dat$Individ[722] <- 5
+
+#Replace NAs with 0
+
+cleaned_ED_dat[is.na(cleaned_ED_dat)] <- 0
