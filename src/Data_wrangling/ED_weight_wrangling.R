@@ -106,4 +106,67 @@ avg_height <- cleaned_ED_dat %>% group_by(Code) %>% summarise(Height_t1 = zero_f
 #Combining datasets ####
 
 full_ED_data <- left_join(avg_height, avg_mass, by = "Code")
-plot(full_ED_data$Mass, full_ED_data$Height_t3)
+
+#Break up code identity in soil and species
+full_ED_data$Species_code <- substr(full_ED_data$Code, 0, 1)
+full_ED_data$Soil_code <- substr(full_ED_data$Code, 2, 3)
+full_ED_data$Soil_code <- as.numeric(as.character(full_ED_data$Soil_code))
+
+#Get soil and species codes/identities
+
+codes <- read.csv(here("Raw/Tidy", "ED_species_soil_codes.csv"), sep = ";" )
+sp_codes <- codes[1:10, 3:4]
+soil_codes <- codes[,1:2]
+
+full_ED_data <- left_join(full_ED_data, sp_codes, by = "Species_code") #Adds a species column
+full_ED_data <- left_join(full_ED_data, soil_codes, by = "Soil_code") #Adds a soils column
+names(full_ED_data)[9] <- "plot"
+
+#Get the abundance data
+source(here("src/Data_wrangling", "Abundance_for_analysis.R"))
+
+#Extract just the soils that were used in the experiment from the field data
+
+soils_field <- all_dat %>% filter(plot == "L30" |
+                                      plot == "L40"|
+                                      plot == "Q20" |
+                                      plot == "R50 " |
+                                      plot == "S10" |
+                                      plot == "T35" |
+                                      plot == "U50" |
+                                      plot == "V10" |
+                                      plot == "V30" |
+                                      plot == "E5" |
+                                      plot == "D15" |
+                                      plot == "E40" |
+                                      plot == "C40" |
+                                      plot == "A30" |
+                                      plot == "A35" |
+                                      plot == "C30" |
+                                      plot == "I40" |
+                                      plot == "AE50"|
+                                      plot == "AG40" |
+                                      plot == "AA0" |
+                                      plot == "AC30" |
+                                      plot == "G40" |
+                                      plot == "AA30" |
+                                      plot == "AC50" |
+                                      plot == "AK10" |
+                                      plot == "AI25" |
+                                      plot == "AI15" |
+                                      plot == "AI40" |
+                                      plot == "R0 " |
+                                      plot == "AK20" 
+)
+
+
+final_ED_dat <- left_join(full_ED_data, soils_field, by = "plot") #Add column of the soil codes for easy plotting
+
+
+
+rm(cleaned_ED_dat, avg_height, avg_mass, raw_weights, my_soil_df, species_df, full_ED_data,
+   codes, all_dat, soil_codes, soils_field, sp_codes, ED_dat, zero_free_mean)
+
+
+
+plot(final_ED_dat$Mass[final_ED_dat$Species_name == "R_burtoniae"] ~ final_ED_dat$ph_kcl[final_ED_dat$Species_name == "R_burtoniae"])
