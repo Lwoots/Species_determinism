@@ -16,15 +16,28 @@ summary(raw_weights)
 raw_weights$Mass[raw_weights$Mass == "empty"] <- NA
 raw_weights$Mass <- as.numeric(as.character(raw_weights$Mass)) #Convert to numeric
 
+#Rename obviously incorrect code names 
+
+raw_weights$Code[510] <- "I19"
+raw_weights$Code[445] <- "J4"
+
+#Rename suspected typos
+
+raw_weights$Code[492] <- "J3"
+raw_weights$Code[378] <- "A22"
+raw_weights$Code[363] <- "G25"
+
 #There should be at max four of the same codes. But E25, B29, C30 have five or more.
 #Looking at the data, there seems to be a few typos
 
 raw_weights$Code[521] <- "E23"
-raw_weights$Code[521] <- "B28"
+raw_weights$Code[116] <- "B28"
 
 #I think that for C30, he measured one sample twice. Not sure where the extra E25 is coming from. I'll remove it for now.
 
-raw_weights <- raw_weights[-363,]
+#raw_weights <- raw_weights[-363,]
+
+#Remove data points that aren't present in the height data set
 
 #Check for outliers
 #hist(raw_weights$Mass) #seems okay
@@ -42,7 +55,7 @@ avg_mass <- raw_weights %>% group_by(Code) %>% summarise(Mass = mean(Mass))
 
 #Get ED data
 
-ED_dat <- read.csv(here("Raw/Unprocessed", "ED_growth_metrics_23Oct_full.csv"), sep = ";" )
+ED_dat <- read.csv(here("Raw/Unprocessed", "ED_growth_metrics_23Oct_for_analysis.csv"))
 
 #Exclude misidentified individuals
 ED_dat <- ED_dat %>% filter(!notes == "wrong_id")
@@ -54,6 +67,10 @@ filtered_ED_dat <- ED_dat %>% filter(!(is.na(Height_1) &
                                        is.na(Height_3)
                                        )
                                      )
+#Move incorrect data entries to correct column
+
+filtered_ED_dat$Height_3[filtered_ED_dat$Both == "I28"] <- filtered_ED_dat$Leaf_3[filtered_ED_dat$Both == "I28"]
+filtered_ED_dat$Height_3[filtered_ED_dat$Both == "I19"] <- filtered_ED_dat$Leaf_3[filtered_ED_dat$Both == "I19"]
 
 #Exclude notes, leaf width, and intermediate time intervals for now
 
@@ -61,10 +78,15 @@ cleaned_ED_dat <- filtered_ED_dat %>% select(-Height_1a, -Height_2a, -Time_1a, -
 rm(filtered_ED_dat)
 
 #Exclude rows containing dicrocaulon (too few to analyse)
-cleaned_ED_dat <- cleaned_ED_dat[-c(548:551),]
+#Exclude rows containing dicrocaulon (too few to analyse)
+cleaned_ED_dat <- cleaned_ED_dat %>% 
+    filter(!Species == "F") %>% 
+    filter(!is.na(Soil))
 
 #Add a missing individual number
-cleaned_ED_dat$Individ[722] <- 5
+#cleaned_ED_dat$Individ[722] <- 5
+
+cleaned_ED_dat$Individ[is.na(cleaned_ED_dat$Individ)] <- 5
 
 #Replace NAs with 0
 cleaned_ED_dat[is.na(cleaned_ED_dat)] <- 0
@@ -84,7 +106,7 @@ names(cleaned_ED_dat)[1] <- "Code"
 #Need to write a function for this
 zero_free_mean <- function(x) {
     zvals <- x==0
-    if (all(zvals)) 0 else mean(x[!zvals])
+    if (all(zvals)) 0 else mean(x[!zvals], na.rm = T)
 }
 
 #Test it
@@ -92,11 +114,11 @@ zero_free_mean <- function(x) {
 #foo <- c(4, 5, 6)
 #goo <- c(4, 5, 6, 0)
 #hoo <- c(0, 0, 0)
-#
+#joo <- c(0,4,NA, 5, 6)
 #mean(foo)
 #mean(goo)
 #zero_free_mean(goo)
-#zero_free_mean(hoo)
+#zero_free_mean(joo)
 
 avg_height <- cleaned_ED_dat %>% group_by(Code) %>% summarise(Height_t1 = zero_free_mean(Height_1),
                                                               Height_t2 = zero_free_mean(Height_2),
@@ -162,11 +184,13 @@ soils_field <- all_dat %>% filter(plot == "L30" |
 
 final_ED_dat <- left_join(full_ED_data, soils_field, by = "plot") #Add column of the soil codes for easy plotting
 
-
+names(final_ED_dat)[8] <- "Species"
 
 rm(cleaned_ED_dat, avg_height, avg_mass, raw_weights, my_soil_df, species_df, full_ED_data,
    codes, all_dat, soil_codes, soils_field, sp_codes, ED_dat, zero_free_mean)
 
 
 
-plot(final_ED_dat$Mass[final_ED_dat$Species_name == "R_burtoniae"] ~ final_ED_dat$ph_kcl[final_ED_dat$Species_name == "R_burtoniae"])
+#plot(final_ED_dat$Mass[final_ED_dat$Species_name == "R_burtoniae"] ~ final_ED_dat$ph_kcl[final_ED_dat$Species_name == "R_burtoniae"])
+
+
