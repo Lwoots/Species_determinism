@@ -3,7 +3,7 @@
 ###############################################
 
 if(!require(pacman)){install.packages("pacman", dependencies=TRUE); library(pacman)}
-p_load(tidyverse, here, ggfortify, visreg)
+p_load(tidyverse, here, ggfortify, visreg, patchwork)
 
 #Read in experimental data
 source(here("src/Data_wrangling", "ED_weight_wrangling.R"))
@@ -13,10 +13,6 @@ source(here("src/Data_wrangling", "ED_weight_wrangling.R"))
 
 soil_pca <- prcomp(final_ED_dat[, c(21:24, 29:33)], scale. = T)
 plot(soil_pca$x[,1], soil_pca$x[,2])
-plot(soil_pca$x[,1], soil_pca$x[,3])
-
-autoplot(soil_pca,
-         data = final_ED_dat)
 
 #Add to dataframe
 
@@ -25,122 +21,58 @@ final_ED_dat <- data.frame(final_ED_dat,
                            PCA2 = soil_pca$x[,2], 
                            PCA3 = soil_pca$x[,3])
 
-#How does the mass data relate to the pca? ####
+#Scale mass and height variables for between species comparisions
+
+final_ED_dat <- final_ED_dat %>% 
+    group_by(Species) %>% 
+    mutate(scaled_mass = scale(Mass))
+final_ED_dat <- final_ED_dat %>% 
+    group_by(Species) %>% 
+    mutate(scaled_height = scale(Height_t3))
+
+#Add growth rate parameters
 
 
-#R. burtoniae
-plot(final_ED_dat$Mass[final_ED_dat$Species == "R_burtoniae"] ~ final_ED_dat$PCA1[final_ED_dat$Species == "R_burtoniae"], pch = 19)
-plot(final_ED_dat$Mass[final_ED_dat$Species == "R_burtoniae"] ~ final_ED_dat$PCA2[final_ED_dat$Species == "R_burtoniae"], pch = 19)
+final_ED_dat <- final_ED_dat %>% 
+    mutate(full_growth_rate = Height_t3 - Height_t1)
 
-m_burt <- lm(final_ED_dat$Mass[final_ED_dat$Species == "R_burtoniae"] ~ 
-                 final_ED_dat$PCA1[final_ED_dat$Species == "R_burtoniae"] + 
-                 final_ED_dat$PCA2[final_ED_dat$Species == "R_burtoniae"] +
-                 final_ED_dat$PCA3[final_ED_dat$Species == "R_burtoniae"])
-summary(m_burt)
-
-#R. comptonii
-plot(final_ED_dat$Mass[final_ED_dat$Species == "R_comptonii"] ~ final_ED_dat$PCA1[final_ED_dat$Species == "R_comptonii"], pch = 19)
-plot(final_ED_dat$Mass[final_ED_dat$Species == "R_comptonii"] ~ final_ED_dat$PCA2[final_ED_dat$Species == "R_comptonii"], pch = 19)
-
-m_comp <-  lm(final_ED_dat$Mass[final_ED_dat$Species == "R_comptonii"] ~ 
-                           final_ED_dat$PCA1[final_ED_dat$Species == "R_comptonii"] + 
-                           final_ED_dat$PCA2[final_ED_dat$Species == "R_comptonii"] +
-                           final_ED_dat$PCA3[final_ED_dat$Species == "R_comptonii"])
-summary(m_comp)
+final_ED_dat <- final_ED_dat %>% 
+    mutate(half_growth_rate = Height_t2 - Height_t1)
 
 
-#D.diversifolium
+#How does the mass and weight data relate to the pca? ####
 
-plot(final_ED_dat$Mass[final_ED_dat$Species == "D_diversifolium"] ~ final_ED_dat$PCA1[final_ED_dat$Species == "D_diversifolium"], pch = 19)
-plot(final_ED_dat$Mass[final_ED_dat$Species == "D_diversifolium"] ~ final_ED_dat$PCA2[final_ED_dat$Species == "D_diversifolium"], pch = 19)
+ggplot(final_ED_dat, aes(PCA1, Mass)) +
+    geom_point() +
+    facet_wrap( ~ Species, ncol = 3, scales = "free_y")
 
-m_div <-  lm(final_ED_dat$Mass[final_ED_dat$Species == "D_diversifolium"] ~ 
-                  final_ED_dat$PCA1[final_ED_dat$Species == "D_diversifolium"] + 
-                  final_ED_dat$PCA2[final_ED_dat$Species == "D_diversifolium"] +
-                  final_ED_dat$PCA3[final_ED_dat$Species == "D_diversifolium"])
-summary(m_div)
+ggplot(final_ED_dat, aes(PCA2, Mass)) +
+    geom_point() +
+    facet_wrap( ~ Species, ncol = 3, scales = "free_y") 
 
-m_div2 <-  lm(final_ED_dat$Mass[final_ED_dat$Species == "D_diversifolium"] ~ 
-                 final_ED_dat$PCA1[final_ED_dat$Species == "D_diversifolium"] + 
-                 I(final_ED_dat$PCA1[final_ED_dat$Species == "D_diversifolium"]^2))
-summary(m_div2)
-m_div3 <- lm(final_ED_dat$Mass[final_ED_dat$Species == "D_diversifolium"] ~ 
-    final_ED_dat$PCA1[final_ED_dat$Species == "D_diversifolium"])
-summary(m_div3)
+ggplot(final_ED_dat, aes(PCA1, Height_t3)) +
+    geom_point() +
+    facet_wrap( ~ Species, ncol = 3, scales = "free_y")
 
-#A. fissum
+ggplot(final_ED_dat, aes(PCA2, Height_t3)) +
+    geom_point() +
+    facet_wrap( ~ Species, ncol = 3, scales = "free_y")
 
-plot(final_ED_dat$Mass[final_ED_dat$Species == "A_fissum"] ~ final_ED_dat$PCA1[final_ED_dat$Species == "A_fissum"], pch = 19)
-plot(final_ED_dat$Mass[final_ED_dat$Species == "A_fissum"] ~ final_ED_dat$PCA2[final_ED_dat$Species == "A_fissum"], pch = 19)
+ggplot(final_ED_dat, aes(PCA1, full_growth_rate)) +
+    geom_point() +
+    facet_wrap( ~ Species, ncol = 3, scales = "free_y")
 
-m_fis <-  lm(final_ED_dat$Mass[final_ED_dat$Species == "A_fissum"] ~ 
-                 final_ED_dat$PCA1[final_ED_dat$Species == "A_fissum"] + 
-                 final_ED_dat$PCA2[final_ED_dat$Species == "A_fissum"] +
-                 final_ED_dat$PCA3[final_ED_dat$Species == "A_fissum"])
+ggplot(final_ED_dat, aes(PCA2, full_growth_rate)) +
+    geom_point() +
+    facet_wrap( ~ Species, ncol = 3, scales = "free_y")
 
-summary(m_fis)
+ggplot(final_ED_dat, aes(PCA1, half_growth_rate)) +
+    geom_point() +
+    facet_wrap( ~ Species, ncol = 3, scales = "free_y")
 
-#A. framesii
-
-plot(final_ED_dat$Mass[final_ED_dat$Species == "A_framesii"] ~ final_ED_dat$PCA1[final_ED_dat$Species == "A_framesii"], pch = 19)
-plot(final_ED_dat$Mass[final_ED_dat$Species == "A_framesii"] ~ final_ED_dat$PCA2[final_ED_dat$Species == "A_framesii"], pch = 19)
-
-m_fram <-  lm(final_ED_dat$Mass[final_ED_dat$Species == "A_framesii"] ~ 
-                 final_ED_dat$PCA1[final_ED_dat$Species == "A_framesii"] + 
-                 final_ED_dat$PCA2[final_ED_dat$Species == "A_framesii"] +
-                 final_ED_dat$PCA3[final_ED_dat$Species == "A_framesii"])
-summary(m_fram)
-
-#A. delaetii
-
-plot(final_ED_dat$Mass[final_ED_dat$Species == "A_delaetii"] ~ final_ED_dat$PCA1[final_ED_dat$Species == "A_delaetii"], pch = 19)
-plot(final_ED_dat$Mass[final_ED_dat$Species == "A_delaetii"] ~ final_ED_dat$PCA2[final_ED_dat$Species == "A_delaetii"], pch = 19)
-
-m_del <-  lm(final_ED_dat$Mass[final_ED_dat$Species == "A_delaetii"] ~ 
-                  final_ED_dat$PCA1[final_ED_dat$Species == "A_delaetii"] + 
-                  final_ED_dat$PCA2[final_ED_dat$Species == "A_delaetii"] +
-                  final_ED_dat$PCA3[final_ED_dat$Species == "A_delaetii"])
-summary(m_del)
-
-#Oophytum
-
-plot(final_ED_dat$Mass[final_ED_dat$Species == "Oophytum_sp"] ~ final_ED_dat$PCA1[final_ED_dat$Species == "Oophytum_sp"], pch = 19)
-plot(final_ED_dat$Mass[final_ED_dat$Species == "Oophytum_sp"] ~ final_ED_dat$PCA2[final_ED_dat$Species == "Oophytum_sp"], pch = 19)
-
-m_ooph <-  lm(final_ED_dat$Mass[final_ED_dat$Species == "Oophytum_sp"] ~ 
-                 final_ED_dat$PCA1[final_ED_dat$Species == "Oophytum_sp"] + 
-                 final_ED_dat$PCA2[final_ED_dat$Species == "Oophytum_sp"] +
-                 final_ED_dat$PCA3[final_ED_dat$Species == "Oophytum_sp"])
-summary(m_ooph)
-
-m_ooph1 <-  lm(final_ED_dat$Mass[final_ED_dat$Species == "Oophytum_sp"] ~ 
-                  final_ED_dat$PCA1[final_ED_dat$Species == "Oophytum_sp"])
-summary(m_ooph1)
-
-#C. spissum
-
-plot(final_ED_dat$Mass[final_ED_dat$Species == "C_spissum"] ~ final_ED_dat$PCA1[final_ED_dat$Species == "C_spissum"], pch = 19)
-plot(final_ED_dat$Mass[final_ED_dat$Species == "C_spissum"] ~ final_ED_dat$PCA2[final_ED_dat$Species == "C_spissum"], pch = 19)
-
-
-m_spis <-  lm(final_ED_dat$Mass[final_ED_dat$Species == "C_spissum"] ~ 
-                  final_ED_dat$PCA1[final_ED_dat$Species == "C_spissum"] + 
-                  final_ED_dat$PCA2[final_ED_dat$Species == "C_spissum"] +
-                  final_ED_dat$PCA3[final_ED_dat$Species == "C_spissum"])
-summary(m_spis)
-
-#C. stam
-
-plot(final_ED_dat$Mass[final_ED_dat$Species == "C_staminodiosum"] ~ final_ED_dat$PCA1[final_ED_dat$Species == "C_staminodiosum"], pch = 19)
-plot(final_ED_dat$Mass[final_ED_dat$Species == "C_staminodiosum"] ~ final_ED_dat$PCA2[final_ED_dat$Species == "C_staminodiosum"], pch = 19)
-
-
-m_stam <-  lm(final_ED_dat$Mass[final_ED_dat$Species == "C_staminodiosum"] ~ 
-                  final_ED_dat$PCA1[final_ED_dat$Species == "C_staminodiosum"] + 
-                  final_ED_dat$PCA2[final_ED_dat$Species == "C_staminodiosum"] +
-                  final_ED_dat$PCA3[final_ED_dat$Species == "C_staminodiosum"])
-summary(m_stam)
-
+ggplot(final_ED_dat, aes(PCA2, half_growth_rate)) +
+    geom_point() +
+    facet_wrap( ~ Species, ncol = 3, scales = "free_y")
 
 
 
@@ -158,135 +90,54 @@ good_soil_list <- grow %>% filter(count > 8) %>% pull(Soil_code)
 
 good_soil_df <- final_ED_dat %>% filter(Soil_code %in% good_soil_list) 
 
-burt <- good_soil_df %>% filter(Species == "R_burtoniae")
-comp <- good_soil_df %>% filter(Species == "R_comptonii")
-div <- good_soil_df %>% filter(Species == "D_diversifolium")
-fram <- good_soil_df %>% filter(Species == "A_framesii")
-fis <- good_soil_df %>% filter(Species == "A_fissum")
-del <- good_soil_df %>% filter(Species == "A_delaetii")
-spis <- good_soil_df %>% filter(Species == "C_spissum")
-stam <- good_soil_df %>% filter(Species == "C_staminodiosum")
-ooph <- good_soil_df %>% filter(Species == "Oophytum_sp")
-
-
-burt <- final_ED_dat %>% filter(Species == "R_burtoniae")
-comp <- final_ED_dat %>% filter(Species == "R_comptonii")
-div <- final_ED_dat %>% filter(Species == "D_diversifolium")
-fram <- final_ED_dat %>% filter(Species == "A_framesii")
-fis <- final_ED_dat %>% filter(Species == "A_fissum")
-del <- final_ED_dat %>% filter(Species == "A_delaetii")
-spis <- final_ED_dat %>% filter(Species == "C_spissum")
-stam <- final_ED_dat %>% filter(Species == "C_staminodiosum")
-ooph <- final_ED_dat %>% filter(Species == "Oophytum_sp")
 
 #Standardised plots ####
-ggplot(burt, aes(Soil_code, rep(9, 30), colour = Height_t3/mean(Height_t3))) +
-    geom_point(size = 7, shape = 15) +
-    geom_point(data = comp, 
-               aes(Soil_code, rep(8, 30), colour = Height_t3/mean(Height_t3)), 
-               size = 7,
-               shape = 15) +
-    geom_point(data = div, 
-               aes(Soil_code, rep(7, 30), colour = Height_t3/mean(Height_t3)), 
-               size = 7,
-               shape = 15) +
-    geom_point(data = fram, 
-               aes(Soil_code, rep(6, 30), colour = Height_t3/mean(Height_t3)), 
-               size = 7,
-               shape = 15) +
-    geom_point(data = fis, 
-               aes(Soil_code, rep(5, 30), colour = Height_t3/mean(Height_t3)), 
-               size = 7,
-               shape = 15) +
-    geom_point(data = del, 
-               aes(Soil_code, rep(4, 30), colour = Height_t3/mean(Height_t3)), 
-               size = 7,
-               shape = 15) +
-    geom_point(data = spis, 
-               aes(Soil_code, rep(3, 30), colour = Height_t3/mean(Height_t3)), 
-               size = 7,
-               shape = 15) +
-    geom_point(data = stam, 
-               aes(Soil_code, rep(2, 30), colour = Height_t3/mean(Height_t3)), 
-               size = 7,
-               shape = 15) +
-    geom_point(data = ooph, 
-               aes(Soil_code, rep(1, 30), colour = Height_t3/mean(Height_t3)), 
-               size = 7,
-               shape = 15)
+
+ggplot(final_ED_dat, aes(Soil_code, Species, fill = scaled_mass)) +
+    geom_tile()
+
+ggplot(final_ED_dat, aes(Soil_code, Species, fill = scaled_height)) +
+    geom_tile()
     
 
-ggplot(burt, aes(Soil_code, rep(9, 20), colour = Mass/mean(Mass))) +
-    geom_point(size = 7, shape = 15) +
-    geom_point(data = comp, 
-               aes(Soil_code, rep(8, 20), colour = Mass/mean(Mass, na.rm = T)), 
-               size = 7,
-               shape = 15) +
-    geom_point(data = div, 
-               aes(Soil_code, rep(7, 20), colour = Mass/mean(Mass, na.rm = T)), 
-               size = 7,
-               shape = 15) +
-    geom_point(data = fram, 
-               aes(Soil_code, rep(6, 20), colour = Mass/mean(Mass)), 
-               size = 7,
-               shape = 15) +
-    geom_point(data = fis, 
-               aes(Soil_code, rep(5, 20), colour = Mass/mean(Mass)), 
-               size = 7,
-               shape = 15) +
-    geom_point(data = del, 
-               aes(Soil_code, rep(4, 20), colour = Mass/mean(Mass)), 
-               size = 7,
-               shape = 15) +
-    geom_point(data = spis, 
-               aes(Soil_code, rep(3, 20), colour = Mass/mean(Mass)), 
-               size = 7,
-               shape = 15) +
-    geom_point(data = stam, 
-               aes(Soil_code, rep(2, 20), colour = Mass/mean(Mass)), 
-               size = 7,
-               shape = 15) +
-    geom_point(data = ooph, 
-               aes(Soil_code, rep(1, 20), colour = Mass/mean(Mass)), 
-               size = 7,
-               shape = 15)
+#Box plots showing variation on a soil ####
 
-#CoV plots ####
+ggplot(final_ED_dat, aes(plot, Mass)) +
+    geom_boxplot()
 
-ggplot(burt, aes(Soil_code, rep(9, 20), colour = sd(Height_t3)/mean(Height_t3))) +
-    geom_point(size = 7, shape = 15) +
-    geom_point(data = comp, 
-               aes(Soil_code, rep(8, 20), colour = sd(Height_t3)/mean(Height_t3)), 
-               size = 7,
-               shape = 15) +
-    geom_point(data = div, 
-               aes(Soil_code, rep(7, 20), colour = sd(Height_t3)/mean(Height_t3)), 
-               size = 7,
-               shape = 15) +
-    geom_point(data = fram, 
-               aes(Soil_code, rep(6, 20), colour = sd(Height_t3)/mean(Height_t3)), 
-               size = 7,
-               shape = 15) +
-    geom_point(data = fis, 
-               aes(Soil_code, rep(5, 20), colour = sd(Height_t3)/mean(Height_t3)), 
-               size = 7,
-               shape = 15) +
-    geom_point(data = del, 
-               aes(Soil_code, rep(4, 20), colour = sd(Height_t3)/mean(Height_t3)), 
-               size = 7,
-               shape = 15) +
-    geom_point(data = spis, 
-               aes(Soil_code, rep(3, 20), colour = sd(Height_t3)/mean(Height_t3)), 
-               size = 7,
-               shape = 15) +
-    geom_point(data = stam, 
-               aes(Soil_code, rep(2, 20), colour = sd(Height_t3)/mean(Height_t3)), 
-               size = 7,
-               shape = 15) +
-    geom_point(data = ooph, 
-               aes(Soil_code, rep(1, 20), colour = sd(Height_t3)/mean(Height_t3)), 
-               size = 7,
-               shape = 15)
+ggplot(final_ED_dat, aes(plot, Height_t3)) +
+    geom_boxplot()
+
+plots_by_PCA1 <- final_ED_dat %>%
+    select(plot, PCA1) %>%
+    distinct() %>%
+    arrange(PCA1) %>%
+    pull(plot)
+
+final_ED_dat %>% 
+    filter(!Species == Oophytum_sp) %>% 
+    arrange(PCA1) %>%
+    mutate(plot = factor(plot, levels = plots_by_PCA1)) %>%
+    ggplot() +
+    aes(plot, Mass) +
+    geom_boxplot()
+    
+final_ED_dat %>% 
+    filter(!Species == Oophytum_sp) %>%
+    ggplot() +
+    aes(ph_kcl, Height_t3-Height_t2, colour = Species) +
+    geom_point()
+
+final_ED_dat %>%
+    filter(Species != "Oophytum_sp") %>%
+    group_by(Species) %>%
+    mutate(Height_t3 = scale(Height_t3-Height_t2)) %>%
+    ggplot() +
+    aes(P, Height_t3) +
+    geom_point() +
+    geom_smooth(method = lm)
+
+
 
 #Coefficient of variation ####
 #sd/mean
@@ -315,6 +166,7 @@ raw_weights$Mass <- as.numeric(as.character(raw_weights$Mass)) #Convert to numer
 #Rename incorrect code name from I79 to I19
 
 raw_weights$Code[510] <- "I19"
+raw_weights$Code[445] <- "J4"
 
 #There should be at max four of the same codes. But E25, B29, C30 have five or more.
 #Looking at the data, there seems to be a few typos
@@ -340,35 +192,34 @@ raw_weights$Soil_code <- as.numeric(as.character(raw_weights$Soil_code))
 no_per_soil <- raw_weights %>% group_by(Species_code, Soil_code) %>% summarise(number = n()) 
 no_per_soil$number <- as.character(no_per_soil$number)
 
-p1 <- ggplot(no_per_soil %>% filter(Species_code == "C"), aes(Soil_code, rep(8, 27), colour = number)) +
-           geom_point(size = 10, shape = 15) +
-           ylim(4,11) +
-           scale_y_continuous(breaks = seq(5, 9, 0.5), labels = c("C_spis", "A_fram", "Ooph", "A_del", "R_comp", "C_stam", "D_div", "A_fis", "R_burt")) +
-    geom_point(data = no_per_soil %>% filter(Species_code == "A"), aes(Soil_code, rep(9, 29), colour = number),
-               size = 11, shape = 15) +
-    geom_point(data = no_per_soil %>% filter(Species_code == "B"), aes(Soil_code, rep(8.5, 27), colour = number),
-               size = 11, shape = 15) +
-    geom_point(data = no_per_soil %>% filter(Species_code == "D"), aes(Soil_code, rep(7.5, 30), colour = number),
-               size = 11, shape = 15) +
-    geom_point(data = no_per_soil %>% filter(Species_code == "E"), aes(Soil_code, rep(7, 28), colour = number),
-               size = 11, shape = 15) +
-    geom_point(data = no_per_soil %>% filter(Species_code == "G"), aes(Soil_code, rep(6.5, 28), colour = number),
-               size = 11, shape = 15) +
-    geom_point(data = no_per_soil %>% filter(Species_code == "H"), aes(Soil_code, rep(6, 20), colour = number),
-               size = 11, shape = 15)+
-    geom_point(data = no_per_soil %>% filter(Species_code == "I"), aes(Soil_code, rep(5.5, 25), colour = number),
-               size = 11, shape = 15) +
-    geom_point(data = no_per_soil %>% filter(Species_code == "J"), aes(Soil_code, rep(5, 27), colour = number),
-               size = 11, shape = 15)
-       
+#plot
+p1 <- no_per_soil %>% 
+    filter(!Species_code == "F") %>% 
+    ungroup() %>%
+    mutate(Species_code = case_when(
+        Species_code == "J" ~ "C_spis",
+        Species_code == "I" ~ "A_fram",
+        Species_code == "H" ~ "Ooph",
+        Species_code == "G" ~ "A_del",
+        Species_code == "E" ~ "R_comp",
+        Species_code == "D" ~ "C_stam",
+        Species_code == "C" ~ "D_div",
+        Species_code == "B" ~ "A_fis",
+        Species_code == "A" ~ "R_burt"
+    )) %>%
+    ggplot() +
+    aes(Soil_code, Species_code, fill = number) +
+    geom_tile()
+
 
 #height data
 
-ED_dat <- read.csv(here("Raw/Unprocessed", "ED_growth_metrics_23Oct_full.csv"), sep = ";" )
+ED_dat <- read.csv(here("Raw/Unprocessed", "ED_growth_metrics_23Oct_for_analysis.csv") )
 
 #Exclude misidentified individuals
 ED_dat <- ED_dat %>% filter(!notes == "wrong_id")
 
+summary(ED_dat)
 #Exclude rows where individuals never sprouted
 
 filtered_ED_dat <- ED_dat %>% filter(!(is.na(Height_1) &
@@ -377,16 +228,31 @@ filtered_ED_dat <- ED_dat %>% filter(!(is.na(Height_1) &
 )
 )
 
+#Move incorrect data entries to correct column
+
+filtered_ED_dat$Height_3[filtered_ED_dat$Both == "I28"] <- filtered_ED_dat$Leaf_3[filtered_ED_dat$Both == "I28"]
+filtered_ED_dat$Height_3[filtered_ED_dat$Both == "I19"] <- filtered_ED_dat$Leaf_3[filtered_ED_dat$Both == "I19"]
+
 #Exclude notes, leaf width, and intermediate time intervals for now
 
 cleaned_ED_dat <- filtered_ED_dat %>% select(-Height_1a, -Height_2a, -Time_1a, -Time_2a, -notes, -Leaf_3)
 rm(filtered_ED_dat)
 
 #Exclude rows containing dicrocaulon (too few to analyse)
-cleaned_ED_dat <- cleaned_ED_dat[-c(548:551),]
+cleaned_ED_dat <- cleaned_ED_dat %>% 
+                      filter(!Species == "F") %>% 
+                      filter(!is.na(Soil))
+
 
 #Add a missing individual number
-cleaned_ED_dat$Individ[722] <- 5
+
+#cleaned_ED_dat$Individ[722] <- 5
+cleaned_ED_dat$Individ[is.na(cleaned_ED_dat$Individ)] <- 5
+
+
+                      
+                          
+
 
 #Replace NAs with 0
 cleaned_ED_dat[is.na(cleaned_ED_dat)] <- 0
@@ -405,47 +271,25 @@ no_per_soil_weight <- cleaned_ED_dat %>% group_by(Species, Soil) %>% filter(Heig
 no_per_soil_weight$number <- as.character(no_per_soil_weight$number)
        
 
-p2 <- ggplot(no_per_soil_weight %>% filter(Species == "C"), aes(Soil, rep(8, 27), colour = number)) +
-    geom_point(size = 10, shape = 15) +
-    ylim(4,11) +
-    scale_y_continuous(breaks = seq(5, 9, 0.5), labels = c("C_spis", "A_fram", "Ooph", "A_del", "R_comp", "C_stam", "D_div", "A_fis", "R_burt")) +
-    geom_point(data = no_per_soil_weight %>% filter(Species == "A"), aes(Soil, rep(9, 29), colour = number),
-               size = 11, shape = 15) +
-    geom_point(data = no_per_soil_weight %>% filter(Species == "B"), aes(Soil, rep(8.5, 27), colour = number),
-               size = 11, shape = 15) +
-    geom_point(data = no_per_soil_weight %>% filter(Species == "D"), aes(Soil, rep(7.5, 30), colour = number),
-               size = 11, shape = 15) +
-    geom_point(data = no_per_soil_weight %>% filter(Species == "E"), aes(Soil, rep(7, 28), colour = number),
-               size = 11, shape = 15) +
-    geom_point(data = no_per_soil_weight %>% filter(Species == "G"), aes(Soil, rep(6.5, 27), colour = number),
-               size = 11, shape = 15) +
-    geom_point(data = no_per_soil_weight %>% filter(Species == "H"), aes(Soil, rep(6, 20), colour = number),
-               size = 11, shape = 15)+
-    geom_point(data = no_per_soil_weight %>% filter(Species == "I"), aes(Soil, rep(5.5, 24), colour = number),
-               size = 11, shape = 15) +
-    geom_point(data = no_per_soil_weight %>% filter(Species == "J"), aes(Soil, rep(5, 29), colour = number),
-               size = 11, shape = 15)
-
-require(patchwork)
-
-p1/p2
-
-no_per_soil_weight %>%
+p2 <- no_per_soil_weight %>%
     ungroup() %>%
     mutate(Species = case_when(
-        Species == "A" ~ "C_spis",
-        Species == "B" ~ "A_fram",
-        Species == "C" ~ "Ooph",
-        Species == "D" ~ "A_del",
+        Species == "J" ~ "C_spis",
+        Species == "I" ~ "A_fram",
+        Species == "H" ~ "Ooph",
+        Species == "G" ~ "A_del",
         Species == "E" ~ "R_comp",
-        Species == "G" ~ "C_stam",
-        Species == "H" ~ "D_div",
-        Species == "I" ~ "A_fis",
-        Species == "J" ~ "R_burt"
+        Species == "D" ~ "C_stam",
+        Species == "C" ~ "D_div",
+        Species == "B" ~ "A_fis",
+        Species == "A" ~ "R_burt"
     )) %>%
     ggplot() +
         aes(Soil, Species, fill = number) +
-        geom_tile()
+        geom_tile() +
+        xlab("Height")
+
+p1/p2
 
 
 #Make auc dataframe
